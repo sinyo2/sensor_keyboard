@@ -1,0 +1,55 @@
+//#define Out           11
+#define In              2
+
+unsigned char keyboard_Text[] = {'h','e','l','l','o','w','o','r','l', 'd'};
+
+uint8_t Index=0;
+
+unsigned long preMillis = 0;
+
+bool start_trigger = false;
+
+bool alive = false;
+
+void setup() {
+        // put your setup code here, to run once:
+        Serial.begin(9600);  // start serial for output
+
+        // put your main code here, to run repeatedly:
+//        pinMode(Out, OUTPUT);
+        pinMode(In, INPUT);  // 차량이 진입하면 전원 ON 체크
+}
+
+void loop() {
+    if (digitalRead(In) == HIGH) {
+//        Serial.println(millis()/1000);
+          start_trigger=true;
+          preMillis = millis();
+          if(alive == true){
+            Index++;  
+            if(Index>9){
+              Index=9;
+            }
+          }
+          
+    }
+    else{
+      if(start_trigger){
+        int timer = millis() - preMillis;
+        if(timer<1000){
+          alive = true;  
+        }else{
+          alive = false;
+          start_trigger = false;
+
+          char sChar = keyboard_Text[Index];
+          Serial.print(sChar);
+          Serial.print(" ");
+          Index = 0;
+        }
+               
+      } 
+    }
+    delay(100);
+}
+
